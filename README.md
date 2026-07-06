@@ -1,50 +1,52 @@
-# TypeScript Exercise Template
+# Session 1: From Java to TypeScript
 
-This template repository is used to create autograded **TypeScript** exercise repositories for CBF Academy bootcamps. It includes a GitHub Classroom autograding workflow that scores student submissions on **functionality** and **code quality** by executing unit tests (Vitest) and submitting the code changes for review by an automated agent.
+**What you are practising:** adding type annotations to a plain JavaScript file and letting the compiler catch a mistake the runtime never would.
 
-Use this template for plain-TypeScript exercises (`ts-exercises-<name>`). For React exercises, use the `ts-react-exercise-template` instead.
+## Setup
 
-## What's in here
+Accept the assignment, clone **your** repository, then install the tooling once:
 
-| Path                                          | Purpose                                                                     |
-| --------------------------------------------- | --------------------------------------------------------------------------- |
-| `exercise/`                                   | Where the starter code lives. Has its own strict `tsconfig.json`.           |
-| `tests/`                                      | Where the autograding unit tests live (`<name>.test.ts`).                   |
-| `vitest.config.ts`                            | Runs `tests/**` and writes JUnit XML to `test-results/junit.xml`.           |
-| `.github/workflows/classroom-autograding.yml` | Calls the shared reusable workflow with `toolchain: node`.                  |
-| `.github/workflows/typecheck.yml`             | Fast `npx tsc` feedback on every push once the starter is renamed to `.ts`. |
-| `package.json`                                | Shared tooling: Vitest, TypeScript, ESLint, Prettier.                       |
+```bash
+npm install
+```
 
-## Usage
+If you have not used npm before: `npm install` reads `package.json`, downloads the listed development tools (the TypeScript compiler, ESLint, and Prettier) into a `node_modules/` folder, and records the exact versions in `package-lock.json`. Think of it as Maven resolving your `pom.xml`, but into a local folder instead of a shared repository.
 
-1. Create a new repository from this template:
-    - **Template:** select this repository
-    - **Name:** use the `ts-exercises-<exercise name>` convention, e.g. `ts-exercises-core-types`
-    - **Visibility:** Public (needed for Classroom)
-2. After initialising, open the repo settings and mark it as a **template** so it can be used for assignments.
-3. Add the exercise on the `main` branch:
-    - Put the starter in `exercise/` (e.g. `exercise/calculator.js`). **Export** every function the tests import, so the grader can reach them.
-    - Put the unit tests in `tests/` (e.g. `tests/calculator.test.ts`), importing from `../exercise/<file>`.
-    - Replace this README with the exercise brief for students.
-4. Create a `solutions` branch and commit a reference solution to it (the renamed `.ts`, fully typed, bugs fixed). Confirm `npm test` is green against it.
-5. Push all branches.
+## The workflow
 
-## Testing (Classroom assignment settings)
+This is the rhythm for every TypeScript exercise in this module:
 
-Create a new Classroom assignment using the exercise repo as the starter template, with:
+1. Open a terminal in the `exercise/` folder.
+2. Rename the starter: `mv calculator.js calculator.ts` (or right-click and rename in VS Code).
+3. Work through what the compiler surfaces. Under strict mode, every untyped parameter is an error, so the squiggles are your to-do list.
+4. Compile with a bare `npx tsc`. Do not pass the filename: `npx tsc calculator.ts` ignores `tsconfig.json` completely and compiles with loose defaults, which defeats the point. The bare form picks up this folder's strict configuration.
+5. Run the output: `node calculator.js`.
 
-- **Repository visibility:** Private
-- **Grant students admin access to their repository:** Disabled
-- **Copy the default branch only:** Enabled (keeps the `solutions` branch private)
-- **Supported editor:** Don't use an online IDE
-- **Protected file paths:** `.github/**/*`, `**/tests/**/*` — so students cannot edit the workflows or the autograding tests
-- **Enable feedback pull requests:** Enabled
+## Your task
 
-Then accept the assignment from a test account, commit and push, and review the Actions output and the Feedback PR comment to confirm everything works.
+The file contains four functions: `add`, `subtract`, `multiply`, and `divide`, plus a small test block that calls each of them.
 
-## How grading works
+1. Rename `calculator.js` to `calculator.ts`.
+2. Add type annotations to all parameters and return types.
+3. Fix any issues TypeScript flags. One of the test calls is deliberately wrong; find and fix it once the types make it visible.
+4. Compile with `npx tsc` and confirm it produces clean JavaScript.
+5. Run `node calculator.js` and verify the output.
 
-- **Functionality** comes from the Vitest suite: the reusable workflow runs `npm ci && npm test`, parses `test-results/junit.xml`, and scales the pass rate to 5 points.
-- **Code quality** comes from the automated agent review of the submission, scaled to 5 points.
+Keep the exported function names (`add`, `subtract`, `multiply`, `divide`) — the autograder imports them by name.
 
-> Note: for exercises whose only defect is a **type** error (nothing wrong at runtime), Vitest cannot distinguish a finished submission from the starter — the `typecheck.yml` check and the agent review are what catch untyped work. Design at least one **runtime-observable** requirement per exercise where you want the functionality score to reflect real progress.
+## Stretch goals
+
+- Add a fifth function, `percentageOf(part, whole)`, that returns a percentage as a number.
+- Make `divide` safe. What should it return when the divisor is zero? How would you express that in the type?
+- Try removing one of the return type annotations. Is the inferred type what you expected?
+
+## Done when
+
+`npx tsc` completes with no errors, `node calculator.js` prints four correct results, and your work is committed and pushed.
+
+## How your work is graded
+
+Every push runs two GitHub Actions checks:
+
+- **Type check** — runs `npx tsc` on your exercise under the strict settings, once you have renamed the starter to `.ts`.
+- **Autograding** — runs an automated test suite (Vitest) against your functions and reports a functionality score, plus an automated code-quality review.
